@@ -7,9 +7,9 @@ import java.util.Set;
 
 public interface RoleService {
 
-    public void addRole(Role role);
+     void addRole(Role role);
 
-    public List<Role> findAll();
+     List<Role> findAll();
 
-    public Set<Role> findByRoleNameIn(List<String> roles);
+     Set<Role> findByRoleNameIn(List<String> roles);
 }

@@ -80,10 +80,19 @@ public class AdminUserController {
 
     @GetMapping("/{id}/edit")
     public String updateUser(Model model, @PathVariable("id") int id) {
-        model.addAttribute("user", userService.findUserById(id));
+        User user = userService.findUserById(id);
+        if (user == null) {
+            model.addAttribute("errorMessage", "User not found");
+            List<User> users = userService.getListAllUsers();
+            model.addAttribute("users", users);
+            return "all_users";
+        }
+        model.addAttribute("user", user);
         model.addAttribute("roles", roleService.findAll());
+        model.addAttribute("userRoles", user.getRoles());
         return "update_user";
     }
+
 
     @PostMapping("/update_user")
     public String saveUpdateUser(@Valid @ModelAttribute("user") User user, BindingResult bindingResult, @RequestParam(value = "rolesView", required = false) List<String> rolesView, Model model) {

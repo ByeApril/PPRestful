@@ -10,19 +10,19 @@ import java.util.Set;
 
 public interface UserService extends UserDetailsService {
 
-    public UserDetails loadUserByUsername(String username);
+     UserDetails loadUserByUsername(String username);
 
-    public boolean saveUser(User user);
+     boolean saveUser(User user);
 
-    public boolean saveUser(User user, List<String> rolesView);
+     boolean saveUser(User user, List<String> rolesView);
 
-    public boolean saveUser(User user, Set<Role> roles);
+     boolean saveUser(User user, Set<Role> roles);
 
-    public List<User> getListAllUsers();
+     List<User> getListAllUsers();
 
-    public User findUserById(int id);
+     User findUserById(int id);
 
-    public void updateUser(User user, List<String> rolesView);
+     void updateUser(User user, List<String> rolesView);
 
-    public void deleteUser(int id);
+     void deleteUser(int id);
 }
