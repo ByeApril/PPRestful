@@ -1,11 +1,51 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<html lang="en">
 <head>
-    <title>Spring Security Example</title>
+    <meta charset="UTF-8">
+    <title>Title</title>
 </head>
 <body>
-<h1>User, welcome spring boot security page!</h1>
+
+<div th:each="role : ${user.getAuthorities()}">
+    <div th:if="${role.getAuthority() == 'ROLE_ADMIN'}">
+        <h1>Admin View</h1>
+    </div>
+</div>
+
+<h2>User Info</h2>
 
 
+<table>
+    <tr>
+        <td align="left">Id:</td>
+        <td align="left" th:text="${user.getId()}"></td>
+    </tr>
+    <tr>
+        <td align="left">Name:</td>
+        <td align="left" th:text="${user.getName()}"></td>
+    </tr>
+    <tr>
+        <td align="left">Age:</td>
+        <td align="left" th:text="${user.getAge()}"></td>
+    </tr>
+    <tr>
+        <td align="left">Email:</td>
+        <td align="left" th:text="${user.getEmail()}"></td>
+    </tr>
+    <tr>
+        <td align="left">Roles:</td>
+        <td align="left">
+            <span th:each="role : ${user.getRoles()}" th:text="${role.getRoleName()} + ' '"></span>
+        </td>
+    </tr>
+</table>
+<br>
+<div th:each="role : ${user.getAuthorities()}">
+    <div th:if="${role.getAuthority() == 'ROLE_ADMIN'}">
+        <button onclick="window.location.href='/admin/all_users'">All users</button>
+    </div>
+</div>
+<br><br><br>
+<button onclick="window.location.href='/logout'">Log Out</button>
 </body>
 </html>

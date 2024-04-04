@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>All users</title>
+</head>
+
+<h1>All users</h1>
+
+<body>
+
+<table>
+    <thead>
+    <tr>
+        <th>Id</th>
+        <th>Name</th>
+        <th>Age</th>
+        <th>Email</th>
+        <th>Role</th>
+        <th class="action">Action</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="user : ${users}">
+        <td th:text="${user.getId()}">Id</td>
+        <td th:text="${user.getName()}">Name</td>
+        <td th:text="${user.getAge()}">Age</td>
+        <td th:text="${user.getEmail()}">Email</td>
+        <td>
+            <span th:each="role : ${user.getRoles()}" th:text="${role.getRoleName()} + ' '"></span>
+        </td>
+        <td class="action">
+            &nbsp
+            <form th:method="GET" th:action="@{/admin/{id}/edit(id=${user.getId()})}">
+                <input type="submit" value="Update">
+            </form>
+            &nbsp
+            <form style="display: inline-block;" th:method="POST" th:action="@{/admin/{id}(id=${user.getId()})}">
+                <input type="submit" value="Remove">
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<br>
+
+<button onclick="window.location.href='/admin/add_user'">Add New User</button>
+
+<br><br>
+
+<button onclick="window.location.href='/logout'">Log Out</button>
+
+</body>
+</html>
