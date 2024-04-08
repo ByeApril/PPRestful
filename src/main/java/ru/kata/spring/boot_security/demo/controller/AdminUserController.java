@@ -43,7 +43,7 @@ public class AdminUserController {
         model.addAttribute("thisUser", user);
         return "all_users";
     }
-    `
+
     @PostMapping("/save_user")
     public String saveUser(@ModelAttribute("user") User user, @RequestParam(value = "rolesController", required = false) List<String> rolesView) {
         userService.saveUser(user, rolesView);
