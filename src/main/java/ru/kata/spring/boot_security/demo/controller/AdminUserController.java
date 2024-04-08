@@ -35,7 +35,7 @@ public class AdminUserController {
     public String showAllUsers(Model model, @AuthenticationPrincipal User user) {
         List<User> users = userService.getListAllUsers();
         if (!users.isEmpty()) {
-            model.addAttribute("user", users.get(0)); // пеля в модель
+            model.addAttribute("user", users.get(0));
         }
         model.addAttribute("users", users);
         model.addAttribute("roles", roleService.findAll());
@@ -43,15 +43,7 @@ public class AdminUserController {
         model.addAttribute("thisUser", user);
         return "all_users";
     }
-
-
-    @GetMapping("/add_user")
-    public String showFormForAdd(Model model) {
-        model.addAttribute("user", new User());
-        model.addAttribute("roles", roleService.findAll());
-        return "add_user";
-    }
-
+    `
     @PostMapping("/save_user")
     public String saveUser(@ModelAttribute("user") User user, @RequestParam(value = "rolesController", required = false) List<String> rolesView) {
         userService.saveUser(user, rolesView);
