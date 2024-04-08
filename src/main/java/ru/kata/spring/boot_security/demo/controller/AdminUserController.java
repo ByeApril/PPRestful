@@ -1,20 +1,26 @@
 package ru.kata.spring.boot_security.demo.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.service.RoleService;
 import ru.kata.spring.boot_security.demo.service.UserService;
 
-import javax.validation.Valid;
 import java.util.List;
 
 @Controller
 @RequestMapping("/admin")
 public class AdminUserController {
+
 
     private final UserService userService;
     private final RoleService roleService;
@@ -26,16 +32,18 @@ public class AdminUserController {
     }
 
     @GetMapping
-    public String adminHome(Model model) {
-        model.addAttribute("users", userService.getListAllUsers());
+    public String showAllUsers(Model model, @AuthenticationPrincipal User user) {
+        List<User> users = userService.getListAllUsers();
+        if (!users.isEmpty()) {
+            model.addAttribute("user", users.get(0)); // пеля в модель
+        }
+        model.addAttribute("users", users);
+        model.addAttribute("roles", roleService.findAll());
+        model.addAttribute("userEmpty", new User());
+        model.addAttribute("thisUser", user);
         return "all_users";
     }
 
-    @GetMapping("/all_users")
-    public String showAllUsers(Model model) {
-        model.addAttribute("users", userService.getListAllUsers());
-        return "all_users";
-    }
 
     @GetMapping("/add_user")
     public String showFormForAdd(Model model) {
@@ -45,68 +53,45 @@ public class AdminUserController {
     }
 
     @PostMapping("/save_user")
-    public String saveUser(@Valid @ModelAttribute("user") User user, BindingResult bindingResult, @RequestParam(value = "roles1", required = false) List<String> roleName, Model model) {
-        if (bindingResult.hasErrors()) {
-            model.addAttribute("roles", roleService.findAll());
-            return "add_user";
-        }
-        boolean isUserSaved;
-        if (roleName == null) {
-            isUserSaved = userService.saveUser(user);
-        } else {
-            isUserSaved = userService.saveUser(user, roleName);
-        }
-        if (isUserSaved) {
-            return "redirect:/admin/all_users";
-        } else {
-            model.addAttribute("roles", roleService.findAll());
-            model.addAttribute("errorMessage", "User not found");
-            return "add_user";
-        }
-    }
-
-    @GetMapping("/update")
-    public String showFormForUpdate(@RequestParam("userId") int id, Model model) {
-        User user = userService.findUserById(id);
-        if (user == null) {
-            model.addAttribute("errorMessage", "User not found");
-            List<User> users = userService.getListAllUsers();
-            model.addAttribute("users", users);
-            return "all_users";
-        }
-        model.addAttribute("user", user);
-        return "update_user";
-    }
-
-    @GetMapping("/{id}/edit")
-    public String updateUser(Model model, @PathVariable("id") int id) {
-        User user = userService.findUserById(id);
-        if (user == null) {
-            model.addAttribute("errorMessage", "User not found");
-            List<User> users = userService.getListAllUsers();
-            model.addAttribute("users", users);
-            return "all_users";
-        }
-        model.addAttribute("user", user);
-        model.addAttribute("roles", roleService.findAll());
-        model.addAttribute("userRoles", user.getRoles());
-        return "update_user";
+    public String saveUser(@ModelAttribute("user") User user, @RequestParam(value = "rolesController", required = false) List<String> rolesView) {
+        userService.saveUser(user, rolesView);
+        return "redirect:/admin";
     }
 
 
-    @PostMapping("/update_user")
-    public String saveUpdateUser(@Valid @ModelAttribute("user") User user, BindingResult bindingResult, @RequestParam(value = "rolesView", required = false) List<String> rolesView, Model model) {
-        if (bindingResult.hasErrors()) {
-            model.addAttribute("roles", roleService.findAll());
-            return "update_user";
+    @PatchMapping("/update/{id}")
+    public String saveUpdateUser(@PathVariable("id") int id, @ModelAttribute("user") User user, @RequestParam(value = "rolesController", required = false) List<String> rolesView) {
+        User existingUser = userService.findUserById(id);
+
+        if (existingUser == null) {
+            return "redirect:/admin";
         }
-        userService.updateUser(user, rolesView);
-        return "redirect:/admin/all_users";
+
+        if (user.getName() != null) {
+            existingUser.setName(user.getName());
+        }
+        if (user.getAge() != 0) {
+            existingUser.setAge(user.getAge());
+        }
+        if (user.getEmail() != null) {
+            existingUser.setEmail(user.getEmail());
+        }
+        if (rolesView != null) {
+            existingUser.setRoles(roleService.findByRoleNameIn(rolesView));
+        }
+
+        userService.saveUser(existingUser);
+
+        return "redirect:/admin";
     }
+
+
+
+
 
     @PostMapping("/{id}")
-    public String deleteUser(@PathVariable("id") int id) {
+    public String deleteUser(@PathVariable("id") int id, @ModelAttribute("user") User user) {
         userService.deleteUser(id);
-        return "redirect:/admin/all_users";
+        return "redirect:/admin";
     }
 }

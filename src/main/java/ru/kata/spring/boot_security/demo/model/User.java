@@ -12,14 +12,8 @@ import javax.persistence.Column;
 import javax.persistence.Transient;
 import javax.persistence.ManyToMany;
 import javax.persistence.FetchType;
-import javax.persistence.JoinTable;
 import javax.persistence.JoinColumn;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.Max;
+import javax.persistence.JoinTable;
 import java.util.Collection;
 import java.util.Set;
 
@@ -31,24 +25,24 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @NotEmpty(message = "Имя не может быть пустым")
-    @Pattern(regexp = "^[A-Za-zА-Яа-я]+$", message = "Имя должно содержать только буквы")
-    @Size(min = 2, max = 30, message = "Имя должно быть от 2 до 25 букв")
+    //    @NotEmpty(message = "Имя не может быть пустым")
+//    @Pattern(regexp = "^[A-Za-zА-Яа-я]+$", message = "Имя должно содержать только буквы")
+//    @Size(min = 2, max = 30, message = "Имя должно быть от 2 до 25 букв")
     @Column(name = "name", unique = true) //
     private String name; //
-    @NotNull(message = "Возраст не может быть пустым")
-    @Min(value = 1, message = "Возраст должен быть больше 0")
-    @Max(value = 95, message = "Возраст должен быть меньше 95")
+    //    @NotNull(message = "Возраст не может быть пустым")
+//    @Min(value = 1, message = "Возраст должен быть больше 0")
+//    @Max(value = 95, message = "Возраст должен быть меньше 95")
     @Column(name = "age")
     private int age;
 
-    @NotEmpty(message = "Email не может быть пустым")
-    @Pattern(regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{1,3}$", message = "Неверный формат email")
+    //    @NotEmpty(message = "Email не может быть пустым")
+//    @Pattern(regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{1,3}$", message = "Неверный формат email")
     @Column(name = "email")
     private String email;
 
     @Column(name = "password")
-    @NotEmpty(message = "Пароль не может быть пустым")
+//    @NotEmpty(message = "Пароль не может быть пустым")
     private String password;
 
     @Transient
@@ -75,7 +69,6 @@ public class User implements UserDetails {
         this.email = email;
         this.roles = roles;
     }
-
 
 
     @Override
@@ -164,4 +157,6 @@ public class User implements UserDetails {
     public void setName(String name) {
         this.name = name;
     }
+
+
 }

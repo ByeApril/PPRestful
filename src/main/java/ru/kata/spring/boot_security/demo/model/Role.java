@@ -22,6 +22,7 @@ public class Role implements GrantedAuthority {
 
     @ManyToMany(mappedBy = "roles")
     private Set<User> users;
+
     public Role() {
     }
 
@@ -53,6 +54,10 @@ public class Role implements GrantedAuthority {
 
     public void setUsers(Set<User> users) {
         this.users = users;
+    }
+
+    public String getRoleNameWithoutRole() {
+        return roleName.substring(5);
     }
 
     @Override

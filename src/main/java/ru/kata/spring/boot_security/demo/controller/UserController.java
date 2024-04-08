@@ -13,9 +13,7 @@ public class UserController {
 
     @GetMapping
     public String userHome(Model model, @AuthenticationPrincipal User user) {
-        if (user != null) {
-            model.addAttribute("user", user);
-        }
+            model.addAttribute("thisUser", user);
         return "user";
     }
 

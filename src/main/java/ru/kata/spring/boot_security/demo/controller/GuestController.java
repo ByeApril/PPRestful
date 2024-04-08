@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 @RequestMapping("/")
 public class GuestController {
-    @GetMapping
-    public String startPage() {
-        return "index";
+    @GetMapping("/login")
+    public String login() {
+        return "login";
     }
 }

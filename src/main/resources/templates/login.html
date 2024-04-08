@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Login page</title>
+    <link rel="icon" type="image/png" href="/icons-spring-logo.ico">
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
+    <link href="https://getbootstrap.com/docs/4.0/examples/signin/signin.css" rel="stylesheet" crossorigin="anonymous"/>
+    <style>
+        .form-signing {
+            max-width: 330px;
+            padding: 15px;
+            margin: auto;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <form class="form-signing mx-auto col-md-6" method="post" action="/process_login">
+        <h2 class="form-signing-heading">Please sign in</h2>
+        <p>
+            <label for="email" class="sr-only">Email address</label>
+            <input type="email" id="email" name="email" class="form-control" placeholder="Email address" required autofocus>
+        </p>
+        <p class="position-relative">
+            <label for="password" class="sr-only">Password</label>
+            <input type="password" id="password" name="password" class="form-control pr-5" placeholder="Password" required>
+            <i class="bi bi-key position-absolute top-50 translate-middle-y text-muted" style="right: 15px;"></i>
+        </p>
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+    </form>
+</div>
+</body>
+</html>
