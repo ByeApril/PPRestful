@@ -3,17 +3,7 @@ package ru.kata.spring.boot_security.demo.model;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.persistence.Id;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Column;
-import javax.persistence.Transient;
-import javax.persistence.ManyToMany;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
+import javax.persistence.*;
 import java.util.Collection;
 import java.util.Set;
 
@@ -28,7 +18,7 @@ public class User implements UserDetails {
     //    @NotEmpty(message = "Имя не может быть пустым")
 //    @Pattern(regexp = "^[A-Za-zА-Яа-я]+$", message = "Имя должно содержать только буквы")
 //    @Size(min = 2, max = 30, message = "Имя должно быть от 2 до 25 букв")
-    @Column(name = "name", unique = true) //
+    @Column(name = "name") //
     private String name; //
     //    @NotNull(message = "Возраст не может быть пустым")
 //    @Min(value = 1, message = "Возраст должен быть больше 0")
@@ -38,7 +28,7 @@ public class User implements UserDetails {
 
     //    @NotEmpty(message = "Email не может быть пустым")
 //    @Pattern(regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{1,3}$", message = "Неверный формат email")
-    @Column(name = "email")
+    @Column(name = "email", unique = true)
     private String email;
 
     @Column(name = "password")
@@ -48,7 +38,7 @@ public class User implements UserDetails {
     @Transient
     private String passwordConfirm;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles;
 
@@ -73,7 +63,7 @@ public class User implements UserDetails {
 
     @Override
     public String getUsername() {
-        return name;
+        return email;
     }
 
     @Override
@@ -157,6 +147,5 @@ public class User implements UserDetails {
     public void setName(String name) {
         this.name = name;
     }
-
 
 }

@@ -33,17 +33,24 @@ public class UserServiceImpl implements UserService {
 
     }
 
+    @Transactional(readOnly = true)
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        Optional<User> user = userRepository.findUserByEmail(email);
-        if (user.isEmpty()) {
+        Optional<User> userOptional = userRepository.findUserByEmail(email);
+        if (userOptional.isEmpty()) {
             throw new UsernameNotFoundException("User not found with email: " + email);
         }
-        return user.get();
+        User user = userOptional.get();
+        user.getRoles().size();
+        return user;
     }
 
+    @Transactional(readOnly = true)
+    public Optional<User> findUserByEmail(String email) {
+        return userRepository.findUserByEmail(email);
+    }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public User findUserById(int id) {
         Optional<User> user = userRepository.findById(id);
         return user.orElse(new User());
@@ -56,7 +63,7 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     public boolean saveUser(User user) {
-        if (userRepository.findUserByName(user.getName()).isPresent()) {
+        if (userRepository.findUserByEmail(user.getEmail()).isPresent()) {
             return false;
         }
         user.setRoles(Collections.singleton(new Role(1, "ROLE_USER")));
@@ -65,8 +72,12 @@ public class UserServiceImpl implements UserService {
         return true;
     }
 
+
     @Transactional
     public boolean saveUser(User user, Set<Role> roles) {
+        if (userRepository.findUserByName(user.getEmail()).isPresent()) {
+            return false;
+        }
         user.setRoles(roles);
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         userRepository.save(user);
@@ -75,7 +86,7 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     public boolean saveUser(User user, List<String> rolesView) {
-        if (userRepository.findUserByName(user.getName()).isPresent()) {
+        if (userRepository.findUserByName(user.getEmail()).isPresent()) {
             return false;
         }
 
@@ -94,6 +105,7 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     public void updateUser(User user, List<String> rolesView) {
+
         if (user.getPassword() != null ) {
             user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         }
@@ -102,6 +114,7 @@ public class UserServiceImpl implements UserService {
         } else {
             user.setRoles(roleService.findByRoleNameIn(rolesView));
         }
+
         userRepository.save(user);
     }
 

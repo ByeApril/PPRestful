@@ -4,13 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.*;
 import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.service.RoleService;
 import ru.kata.spring.boot_security.demo.service.UserService;
@@ -46,6 +40,9 @@ public class AdminUserController {
 
     @PostMapping("/save_user")
     public String saveUser(@ModelAttribute("user") User user, @RequestParam(value = "rolesController", required = false) List<String> rolesView) {
+        if (userService.findUserByEmail(user.getEmail()).isPresent()) {
+            return "redirect:/admin";
+        }
         userService.saveUser(user, rolesView);
         return "redirect:/admin";
     }
@@ -55,6 +52,9 @@ public class AdminUserController {
     public String saveUpdateUser(@PathVariable("id") int id, @ModelAttribute("user") User user, @RequestParam(value = "rolesController", required = false) List<String> rolesView) {
         User existingUser = userService.findUserById(id);
 
+        if (userService.findUserByEmail(user.getEmail()).isPresent()) {
+            return "redirect:/admin";
+        }
         if (existingUser == null) {
             return "redirect:/admin";
         }
@@ -76,9 +76,6 @@ public class AdminUserController {
 
         return "redirect:/admin";
     }
-
-
-
 
 
     @PostMapping("/{id}")
