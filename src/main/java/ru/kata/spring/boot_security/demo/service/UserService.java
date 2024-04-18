@@ -16,15 +16,13 @@ public interface UserService extends UserDetailsService {
 
      boolean saveUser(User user);
 
-     boolean saveUser(User user, List<String> rolesView);
-
      boolean saveUser(User user, Set<Role> roles);
 
      List<User> getListAllUsers();
 
      User findUserById(int id);
 
-     void updateUser(User user, List<String> rolesView);
+     void updateUser(User user);
 
      void deleteUser(int id);
 }

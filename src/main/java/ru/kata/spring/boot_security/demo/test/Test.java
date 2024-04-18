@@ -14,23 +14,26 @@ import java.util.Set;
 @Component
 public class Test {
     private final UserService userService;
-    private final RoleService roleSerivce;
+    private final RoleService roleService;
 
     @Autowired
     public Test(UserService userService, RoleService roleService) {
         this.userService = userService;
-        this.roleSerivce = roleService;
+        this.roleService = roleService;
     }
 
     @PostConstruct
     public void init() {
+        // создаю роли
         Role roleUser = new Role(1, "ROLE_USER");
         Role roleAdmin = new Role(2, "ROLE_ADMIN");
-        roleSerivce.addRole(roleUser);
-        roleSerivce.addRole(roleAdmin);
+        roleService.addRole(roleUser);
+        roleService.addRole(roleAdmin);
 
+        // для входа
         userService.saveUser(new User("admin", "admin", 20, "admin@admin.com"),
-                new HashSet<Role>(Set.of(roleAdmin, roleUser)));
-        userService.saveUser(new User("user", "user", 18, "user@user.com"));
+                new HashSet<>(Set.of(roleAdmin, roleUser)));
+        userService.saveUser(new User("user", "user",18, "user@user.com"));
+
     }
 }

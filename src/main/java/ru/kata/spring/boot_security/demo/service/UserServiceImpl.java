@@ -19,9 +19,7 @@ import java.util.Set;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-
     private final RoleService roleService;
-
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
 
@@ -32,28 +30,39 @@ public class UserServiceImpl implements UserService {
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
 
     }
-
-    @Transactional(readOnly = true)
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        Optional<User> userOptional = userRepository.findUserByEmail(email);
-        if (userOptional.isEmpty()) {
-            throw new UsernameNotFoundException("User not found with email: " + email);
+        Optional<User> user = userRepository.findUserByEmail(email);
+
+        if (user.isEmpty()) {
+            throw new UsernameNotFoundException("User not found");
         }
-        User user = userOptional.get();
-        user.getRoles().size();
-        return user;
+        return user.get();
     }
 
-    @Transactional(readOnly = true)
+    @Override
     public Optional<User> findUserByEmail(String email) {
-        return userRepository.findUserByEmail(email);
+        return Optional.empty();
     }
 
-    @Transactional(readOnly = true)
-    public User findUserById(int id) {
-        Optional<User> user = userRepository.findById(id);
-        return user.orElse(new User());
+    @Transactional
+    public boolean saveUser(User user) {
+        if (user.getRoles() == null) {
+            user.setRoles(Collections.singleton(new Role(1, "ROLE_USER")));
+        }
+        user.getRoles().forEach(role -> roleService.addRole(role));
+
+        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+        userRepository.save(user);
+        return true;
+    }
+
+    @Transactional
+    public boolean saveUser(User user, Set<Role> roles) {
+        user.setRoles(roles);
+        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+        userRepository.save(user);
+        return true;
     }
 
     @Transactional
@@ -61,72 +70,23 @@ public class UserServiceImpl implements UserService {
         return userRepository.findAll();
     }
 
-    @Transactional
-    public boolean saveUser(User user) {
-        if (userRepository.findUserByEmail(user.getEmail()).isPresent()) {
-            return false;
-        }
-        user.setRoles(Collections.singleton(new Role(1, "ROLE_USER")));
-        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-        userRepository.save(user);
-        return true;
+    @Transactional()
+    public User findUserById(int id) {
+        Optional<User> user = userRepository.findById(id);
+        return user.orElse(new User());
     }
-
-
     @Transactional
-    public boolean saveUser(User user, Set<Role> roles) {
-        if (userRepository.findUserByName(user.getEmail()).isPresent()) {
-            return false;
-        }
-        user.setRoles(roles);
-        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-        userRepository.save(user);
-        return true;
-    }
-
-    @Transactional
-    public boolean saveUser(User user, List<String> rolesView) {
-        if (userRepository.findUserByName(user.getEmail()).isPresent()) {
-            return false;
-        }
-
-        Set<Role> roles;
-        if (rolesView == null || rolesView.isEmpty()) {
-            roles = Collections.singleton(new Role(1, "ROLE_USER"));
-        } else {
-            roles = roleService.findByRoleNameIn(rolesView);
-        }
-
-        user.setRoles(roles);
-        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-        userRepository.save(user);
-        return true;
-    }
-
-    @Transactional
-    public void updateUser(User user, List<String> rolesView) {
-
-        if (user.getPassword() != null ) {
-            user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-        }
-        if (rolesView == null) {
+    public void updateUser(User user) {
+        if (user.getRoles() == null) {
             user.setRoles(Collections.singleton(new Role(1, "ROLE_USER")));
-        } else {
-            user.setRoles(roleService.findByRoleNameIn(rolesView));
         }
-
+        user.getRoles().forEach(role -> roleService.addRole(role));
+        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         userRepository.save(user);
     }
-
-
-
-
 
     @Transactional
     public void deleteUser(int id) {
         userRepository.deleteById(id);
-
     }
 }
-
-
