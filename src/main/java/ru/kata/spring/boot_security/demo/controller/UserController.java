@@ -6,13 +6,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.kata.spring.boot_security.demo.model.User;
 
-
 @RequestMapping("api/user")
 @RestController
 public class UserController {
 
     @GetMapping()
-    public User adminInfo(@AuthenticationPrincipal User user) {
+    public User userInfo(@AuthenticationPrincipal User user) {
         return user;
     }
 }
